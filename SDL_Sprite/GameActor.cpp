@@ -1,11 +1,14 @@
 #include "GameActor.h"
 
-GameActor::GameActor(std::string name, int maxVel)
+GameActor::GameActor(int maxVel, int x, int y, int collWidth, int collHeight, int gravityFactor)
 {
-	this->name = name;
-	moveComp.collider.getCollider()->x = 100;
-	moveComp.collider.getCollider()->y = 100;
+
 	
+	MoveComponent(x, y, 0, 0, gravityFactor);
+	collider.getCollisionBox()->x = x;
+	collider.getCollisionBox()->y = y;
+	collider.getCollisionBox()->w = collWidth;
+	collider.getCollisionBox()->h = collHeight;
 }
 
 
@@ -13,28 +16,29 @@ GameActor::~GameActor()
 {
 }
 
-void GameActor::move()
+void GameActor::move(int screenWidth, int screenHeight, int radius)
 {
-	moveComp.move();
+	moveComp.move(this->collider, screenWidth, screenHeight, radius);
+	
 }
 
 void GameActor::handleEvent(SDL_Event& e)
 {
-	if (e.type = SDL_KEYDOWN && e.key.repeat == 0)
+	if (e.type == SDL_KEYDOWN && e.key.repeat == 0)
 	{
 		switch (e.key.keysym.sym)
 		{
 			case SDLK_d:
-				moveComp.setVelX(10);
+				moveComp.addVelX(10);
 				break;
 			case SDLK_a:
-				moveComp.setVelX(-10);
+				moveComp.addVelX(-10);
 				break;
 			case SDLK_SPACE:
-				if (!moveComp.getIsAirborne())
+				if (moveComp.getIsAirborne() == false)
 				{
-					moveComp.setIsAirborne(false);
-					moveComp.setVelY(10);
+					moveComp.addVelY(-10);
+					moveComp.setIsAirborne(true);
 				}
 		}
 		
@@ -44,16 +48,19 @@ void GameActor::handleEvent(SDL_Event& e)
 		switch (e.key.keysym.sym)
 		{
 			case SDLK_d:
-				moveComp.setVelX(-10);
+				moveComp.addVelX(-10);
 				break;
 			case SDLK_a:
-				moveComp.setVelX(10);
+				moveComp.addVelX(10);
 				break;
 		}
 	}
 }
 
-void GameActor::setCollisionBoxSize(int width, int height)
+
+void GameActor::applyGravity()
 {
-	moveComp.setCollisionBoxSize(width, height);
+	moveComp.applyGravity();
 }
+
+

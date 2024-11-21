@@ -1,4 +1,14 @@
 #include "MoveComponent.h"
+//MoveComponent::MoveComponent()
+//{
+//	posX = 0;
+//	posY = 0;
+//	velX = 0;
+//	velY = 0;
+//	isAirborne = true;
+//	gravityFactor = 3;
+//	airFriction = 0;
+//}
 
 MoveComponent::MoveComponent(int positionX, int positionY, int velocityX, int velocityY, int gravityFactor)
 {
@@ -7,23 +17,23 @@ MoveComponent::MoveComponent(int positionX, int positionY, int velocityX, int ve
 	velX = velocityX;
 	velY = velocityY;
 	isAirborne = true;
-	gravityFactor = gravityFactor;
+	this->gravityFactor = gravityFactor;
 	airFriction = 0;
 }
+
 
 MoveComponent::~MoveComponent()
 {
 }
 
-bool MoveComponent::checkNearbyColliders(int velocityX, int velocityY)
+bool MoveComponent::checkNearbyColliders(Collider& collider, int radius)
 {
 	for (Collider* obj : Collider::ColliderList)
 	{
-		int distX = abs(collider.getPosX() - obj->getPosX());
-		int distY = abs(collider.getPosY() - obj->getPosY());
-		if ((obj != &this->collider) || (distX < velX * 10) || (distY < velY * 10))
+		
+		if ((obj != &collider) && isNearby(*obj, radius))
 		{
-			if (collider.checkCollision(collider.getCollider(), obj->getCollider()))
+			if (collider.checkCollision(collider.getCollisionBox(), obj->getCollisionBox()))
 			{
 				return true;
 			}
@@ -42,48 +52,47 @@ bool MoveComponent::getIsAirborne()
 	return isAirborne;
 }
 
-void MoveComponent::setVelX(int value)
+void MoveComponent::addVelX(int value)
 {
 	velX += value;
 }
 
-void MoveComponent::setVelY(int value)
+void MoveComponent::addVelY(int value)
 {
-	velY -= value;
+	velY += value;
 }
 
-void MoveComponent::move()
+void MoveComponent::move(Collider& collider, const int screenWidth, const int screenHeight, int radius)
 {
 	posX += velX;
-	collider.getCollider()->x = posX;
+	collider.getCollisionBox()->x = posX;
 
-	if ((posX < 0) || (posX + collider.getWidth() > 576) || checkNearbyColliders())
+	if ((posX < 0) || (posX + collider.getWidth() > screenWidth) || checkNearbyColliders(collider, radius))
 	{
 		posX -= velX;
-		collider.getCollider()->x = posX;
-	}
-
-	velY != 0 ? velY += gravityFactor : velY = 0;
-	posY += velY;
-	collider.getCollider()->y = posY;
-
-	if ((posY < 0) || (posY + collider.getHeight() > 324) || (checkNearbyColliders()))
-	{
-		velY = 0;
-		collider.getCollider()->y = posY + 1;
-		isAirborne = false;
-		
-	}
-	else
-	{
-		isAirborne = true;
-		velY += 10;
-	}
-
+		collider.getCollisionBox()->x = posX;
+	}	
 	
+	posY += velY;
+	collider.getCollisionBox()->y = posY;
+
+	if ((posY < 0) || (posY + collider.getHeight() > screenHeight) || checkNearbyColliders(collider, radius))
+	{
+		posY -= velY;
+		collider.getCollisionBox()->y = posY;
+		isAirborne = false;
+		velY = 0;
+	}
 }
 
-void MoveComponent::setCollisionBoxSize(int width, int height)
+int MoveComponent::isNearby(Collider& collider, int radius)
 {
-	collider.setCollisionBoxSize(width, height);
+	return (collider.getCollisionBox()->x - posX) * (collider.getCollisionBox()->x - posX) + (collider.getCollisionBox()->y - posY) * (collider.getCollisionBox()->y - posY);
 }
+
+void MoveComponent::applyGravity()
+{
+	velY += gravityFactor;
+}
+
+

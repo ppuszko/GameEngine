@@ -29,7 +29,6 @@ public:
 	std::vector<SDL_Rect> animationClips;
 private:
 	SDL_Texture* sTexture;
-	
 	int sWidth;
 	int sHeight;
 

@@ -5,17 +5,20 @@
 class MoveComponent
 {
 public:
-	MoveComponent(int positionX = 0, int positionY = 0, int velocityX = 10, int velocityY = 10, int gravityFactor = 3);
+	/*MoveComponent();*/
+	MoveComponent(int positionX = 0, int positionY = 0, int velocityX = 0, int velocityY = 0, int gravityFactor = 1);
 	~MoveComponent();
 
-	bool checkNearbyColliders(int velocityX = 10, int veocitylY = 10);
+	bool checkNearbyColliders(Collider& collider, int radius);
 	void setIsAirborne(bool value);
 	bool getIsAirborne();
-	void setVelX(int value);
-	void setVelY(int value);
-	void move();
-	void setCollisionBoxSize(int width, int height);
-	Collider collider;
+	void addVelX(int value);
+	void addVelY(int value);
+	void move(Collider& collider, const int screenWidth, const int screenHeight, int radius=100);
+	int isNearby(Collider& collider, int radius);
+	void applyGravity();
+
+
 private:
 	int posX, posY;
 	int velX, velY;

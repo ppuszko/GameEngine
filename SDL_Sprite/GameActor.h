@@ -5,13 +5,13 @@
 class GameActor : public GameObject
 {
 public:
-	GameActor(std::string name, int maxVel);
+	GameActor(int maxVel, int x, int y, int collWidth = 0, int collHeight = 0, int gravityFactor = 3);
 	~GameActor();
-	void move();
+	void move(int screenWidth, int screenHeight, int radius = 100);
 	void handleEvent(SDL_Event& e);
-	void setCollisionBoxSize(int width, int height);
-	MoveComponent moveComp;
-protected:
+	void applyGravity();
 	
-	std::string name;
+protected:
+	MoveComponent moveComp;
+
 };

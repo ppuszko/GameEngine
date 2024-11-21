@@ -14,10 +14,10 @@ public:
 	int getHeight();
 	int getPosX();
 	int getPosY();
-	SDL_Rect* getCollider();
+	SDL_Rect* getCollisionBox();
 	static std::vector<Collider*> ColliderList;
 	
-private:
+protected:
 	
 	SDL_Rect collisionBox;
 };

@@ -48,7 +48,7 @@ int Collider::getPosY()
 	return collisionBox.y;
 }
 
-SDL_Rect* Collider::getCollider()
+SDL_Rect* Collider::getCollisionBox()
 {
 	return &collisionBox;
 }

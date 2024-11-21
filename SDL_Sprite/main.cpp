@@ -16,7 +16,8 @@ int main(int agrc, char* args[])
 	
 	//Sprite spriteSheet;
 	//GameObject slime(10);
-	GameActor slime("maciek", 10);
+	GameActor slime(10, 200, 200,64, 64, 3);
+	GameObject pad(0, 200);
 	Sprite bg1;
 	Sprite bg2;
 	Sprite bg3;
@@ -36,6 +37,7 @@ int main(int agrc, char* args[])
 		}
 		else
 		{
+			pad.initSprite(renderer, "C:/Users/ppusz/Desktop/SDLImagebmp/Nowy folder/PNG/Pads/Pad_3_3.png");
 			loadSpriteSheet(bg1, renderer, "C:/Users/ppusz/Desktop/SDLImagebmp/Clouds/Clouds 4/1.png");
 			loadSpriteSheet(bg2, renderer, "C:/Users/ppusz/Desktop/SDLImagebmp/Clouds/Clouds 4/2.png");
 			loadSpriteSheet(bg3, renderer, "C:/Users/ppusz/Desktop/SDLImagebmp/Clouds/Clouds 4/3.png");
@@ -46,6 +48,7 @@ int main(int agrc, char* args[])
 			bool quit = false;
 			int frame{ 0 };
 
+
 			SDL_Event e;
 
 			Uint8 r = 255;
@@ -53,8 +56,7 @@ int main(int agrc, char* args[])
 			Uint8 b = 255;
 			Uint8 a = 255;
 
-			SDL_Rect wall{ 300, 250, 50, 74 };
-			SDL_Rect floor{ 0, 270, 576, 54 };
+
 
 			while (!quit)
 			{
@@ -94,8 +96,10 @@ int main(int agrc, char* args[])
 					}*/
 					slime.handleEvent(e);
 				}
-				slime.move();
-
+				
+				
+				slime.move(SCREEN_WIDTH, SCREEN_HEIGHT);
+				slime.applyGravity();
 
 				//rendering layered background 
 				SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
@@ -106,11 +110,10 @@ int main(int agrc, char* args[])
 				bg4.render(0, 0, renderer);
 
 				SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
-				SDL_RenderDrawRect(renderer, &wall);
-				SDL_RenderDrawRect(renderer, &floor);
 
-				slime.moveComp.collider.showCollisionBox(renderer);
-				slime.render(288, 162, renderer, 2, frame);
+
+				slime.showCollisionBox(renderer);
+				slime.renderAnimation(renderer, frame, 2);
 				//allows for color and alpha modulation
 				/*spriteSheet.setColor(r, g, b);
 				spriteSheet.setAlpha(a);*/
@@ -119,12 +122,13 @@ int main(int agrc, char* args[])
 				//Render current frame
 				//spriteSheet.renderAnimation(288, 162, renderer, clips, frame, 4);
 				//slime.render(288, 162, renderer, 2, frame);
-
+				pad.render(renderer, 1);
+				pad.showCollisionBox(renderer);
 				SDL_RenderPresent(renderer);
 
 				//std::cout << GameObject::GMList[0]->collisionBox.w;
 				
-
+				SDL_Delay(16);
 			}
 		}
 	}
