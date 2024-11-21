@@ -6,6 +6,7 @@
 #include "GameObject.h"
 #include <vector>
 #include "GameActor.h"
+//676x324, pad: 418x113
 
 const int SCREEN_WIDTH = 576;
 const int SCREEN_HEIGHT = 324;
@@ -16,8 +17,10 @@ int main(int agrc, char* args[])
 	
 	//Sprite spriteSheet;
 	//GameObject slime(10);
-	GameActor slime(10, 200, 200,64, 64, 3);
-	GameObject pad(0, 200);
+	GameActor slime(10, 200, 200,64, 64, 2);
+	GameObject pad1(0, 300);
+	GameObject pad2(400, 300);
+	GameObject pad3(400, 230);
 	Sprite bg1;
 	Sprite bg2;
 	Sprite bg3;
@@ -37,7 +40,9 @@ int main(int agrc, char* args[])
 		}
 		else
 		{
-			pad.initSprite(renderer, "C:/Users/ppusz/Desktop/SDLImagebmp/Nowy folder/PNG/Pads/Pad_3_3.png");
+			pad1.initSprite(renderer, "C:/Users/ppusz/Desktop/SDLImagebmp/Nowy folder/PNG/Pads/Pad_3_3.png");
+			pad2.initSprite(renderer, "C:/Users/ppusz/Desktop/SDLImagebmp/Nowy folder/PNG/Pads/Pad_3_3.png");
+			pad3.initSprite(renderer, "C:/Users/ppusz/Desktop/SDLImagebmp/Nowy folder/PNG/Pads/Pad_3_3.png");
 			loadSpriteSheet(bg1, renderer, "C:/Users/ppusz/Desktop/SDLImagebmp/Clouds/Clouds 4/1.png");
 			loadSpriteSheet(bg2, renderer, "C:/Users/ppusz/Desktop/SDLImagebmp/Clouds/Clouds 4/2.png");
 			loadSpriteSheet(bg3, renderer, "C:/Users/ppusz/Desktop/SDLImagebmp/Clouds/Clouds 4/3.png");
@@ -122,8 +127,12 @@ int main(int agrc, char* args[])
 				//Render current frame
 				//spriteSheet.renderAnimation(288, 162, renderer, clips, frame, 4);
 				//slime.render(288, 162, renderer, 2, frame);
-				pad.render(renderer, 1);
-				pad.showCollisionBox(renderer);
+				pad1.render(renderer, 1);
+				pad2.render(renderer, 1);
+				pad3.render(renderer, 1);
+				pad1.showCollisionBox(renderer);
+				pad2.showCollisionBox(renderer);
+				pad3.showCollisionBox(renderer);
 				SDL_RenderPresent(renderer);
 
 				//std::cout << GameObject::GMList[0]->collisionBox.w;

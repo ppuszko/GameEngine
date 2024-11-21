@@ -18,6 +18,5 @@ public:
 	static std::vector<Collider*> ColliderList;
 	
 protected:
-	
 	SDL_Rect collisionBox;
 };

@@ -17,6 +17,7 @@ Sprite::~Sprite()
 	free();
 }
 
+//crashes every second execution of program, please help me 
 void Sprite::free()
 {
 	if (sTexture != NULL)
@@ -28,11 +29,10 @@ void Sprite::free()
 	}
 }
 
+//load image and convert it to texture
 bool Sprite::loadFromFile(std::string path, SDL_Renderer* renderer)
 {
 	free();
-
-	SDL_Texture* newTexture = NULL;
 	SDL_Surface* loadedSurface = IMG_Load(path.c_str());
 
 	if (loadedSurface == NULL)
@@ -41,8 +41,8 @@ bool Sprite::loadFromFile(std::string path, SDL_Renderer* renderer)
 	}
 	else
 	{
-		newTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
-		if (newTexture == NULL)
+		sTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
+		if (sTexture == NULL)
 		{
 			printf("Texture could not be created! Error for path: %s\n IMG Error: %s\n", path.c_str(), SDL_GetError());
 		}
@@ -53,10 +53,11 @@ bool Sprite::loadFromFile(std::string path, SDL_Renderer* renderer)
 		}
 		SDL_FreeSurface(loadedSurface);
 	}
-	sTexture = newTexture;
 	return sTexture != NULL;
 }
 
+//if we have animation_spriteSheet.png containing 20 frames of animation which are stored in e.g. 5 rows, each row containing 4 frames, then we need to split it into separate frames to 
+//display the animation. 
 void Sprite::clipSpriteSheet(int cols, int rows)
 {
 	int clipWidth = sWidth / cols;
@@ -76,6 +77,7 @@ void Sprite::clipSpriteSheet(int cols, int rows)
 	}
 }
 
+//renders only one frame
 void Sprite::render(int x, int y, SDL_Renderer* renderer, SDL_Rect* clip, int scale, double angle, SDL_Point* center, SDL_RendererFlip flip)
 {
 	int bufferX{ 0 };
@@ -95,11 +97,12 @@ void Sprite::render(int x, int y, SDL_Renderer* renderer, SDL_Rect* clip, int sc
 	SDL_RenderCopyEx(renderer, sTexture, clip, &destQuad, angle, center, flip);
 }
 
+//renderes animation consisting of multiple frames
 void Sprite::renderAnimation(int x, int y, SDL_Renderer* renderer, std::vector<SDL_Rect>& clip, int& startingFrame, int scale, double angle, SDL_Point* center, SDL_RendererFlip flip)
 {
+	//adjusts position of scaled sprite, it's temporary and needs to be changed, cause it works only when scale is == 2
 	int bufferX = clip[0].w / 2;
 	int bufferY = clip[0].h / 2;
-
 
 	SDL_Rect destQuad = { 
 		x - bufferX,
@@ -107,7 +110,7 @@ void Sprite::renderAnimation(int x, int y, SDL_Renderer* renderer, std::vector<S
 		clip[0].w*scale, 
 		clip[0].h*scale };
 
-
+	//index of current frame in clip list, temporarily divided by 4 to slow animation's pace, should be modified
 	int currentFrame = startingFrame / 4;
 	if (currentFrame >= clip.size())
 	{
@@ -118,44 +121,40 @@ void Sprite::renderAnimation(int x, int y, SDL_Renderer* renderer, std::vector<S
 	startingFrame++;
 }
 
+
+//not really relevant methods
 int Sprite::getWidth() const
 {
 	return sWidth;
 }
-
 int Sprite::getHeight() const
 {
 	return sHeight;
 }
-
 std::vector<SDL_Rect> Sprite::getAnimationClips() const
 {
 	return animationClips;
 }
-
 void Sprite::updateDimensions(int width, int height)
 {
 	sWidth = width;
 	sHeight = height;
 }
-
 void Sprite::setColor(Uint8 red, Uint8 green, Uint8 blue)
 {
 	SDL_SetTextureColorMod(sTexture, red, green, blue);
 }
-
 void Sprite::setBlendMode(SDL_BlendMode blending)
 {
 	SDL_SetTextureBlendMode(sTexture, blending);
 }
-
 void Sprite::setAlpha(Uint8 alpha)
 {
 	SDL_SetTextureAlphaMod(sTexture, alpha);
 }
 
 
-
+//initilizes window and renderer
 bool init(SDL_Window*& window, SDL_Renderer*& renderer, int width, int height)
 {
 	bool success = true;
@@ -189,6 +188,7 @@ bool init(SDL_Window*& window, SDL_Renderer*& renderer, int width, int height)
 	return success;
 }
 
+//allows to check if sprite was properly loaded, currently works just like Sprite::loafFromFile, should be modified to load multiple sprites
 bool loadSpriteSheet(Sprite& spriteTexture, SDL_Renderer* renderer, std::string path )
 {
 	
@@ -202,6 +202,7 @@ bool loadSpriteSheet(Sprite& spriteTexture, SDL_Renderer* renderer, std::string 
 	return true;
 }
 
+//divides sprite sheet into single sprites, so it can be used to display animation
 std::vector<SDL_Rect> clipSpriteSheet(Sprite& spriteTexture, int cols, int rows)
 {
 	std::vector<SDL_Rect> spriteClips;

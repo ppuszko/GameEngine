@@ -26,12 +26,18 @@ MoveComponent::~MoveComponent()
 {
 }
 
+//get a^2 + b^2 part of pythagorean triangle, based on own position and position of currently inspected collider
+int MoveComponent::isNearby(Collider& collider)
+{
+	return (collider.getCollisionBox()->x - posX) * (collider.getCollisionBox()->x - posX) + (collider.getCollisionBox()->y - posY) * (collider.getCollisionBox()->y - posY);
+}
+
+//checks for collision with nearby colliders, radius is c^2 part of pythagorean triangle
 bool MoveComponent::checkNearbyColliders(Collider& collider, int radius)
 {
 	for (Collider* obj : Collider::ColliderList)
 	{
-		
-		if ((obj != &collider) && isNearby(*obj, radius))
+		if ((obj != &collider) && isNearby(*obj) <= radius*radius)
 		{
 			if (collider.checkCollision(collider.getCollisionBox(), obj->getCollisionBox()))
 			{
@@ -46,22 +52,20 @@ void MoveComponent::setIsAirborne(bool value)
 {
 	isAirborne = value;
 }
-
 bool MoveComponent::getIsAirborne()
 {
 	return isAirborne;
 }
-
 void MoveComponent::addVelX(int value)
 {
 	velX += value;
 }
-
 void MoveComponent::addVelY(int value)
 {
 	velY += value;
 }
 
+//updates position based on velocity value, if updating position resulted in collision, reverses position's update
 void MoveComponent::move(Collider& collider, const int screenWidth, const int screenHeight, int radius)
 {
 	posX += velX;
@@ -83,11 +87,6 @@ void MoveComponent::move(Collider& collider, const int screenWidth, const int sc
 		isAirborne = false;
 		velY = 0;
 	}
-}
-
-int MoveComponent::isNearby(Collider& collider, int radius)
-{
-	return (collider.getCollisionBox()->x - posX) * (collider.getCollisionBox()->x - posX) + (collider.getCollisionBox()->y - posY) * (collider.getCollisionBox()->y - posY);
 }
 
 void MoveComponent::applyGravity()

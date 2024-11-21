@@ -32,17 +32,14 @@ int Collider::getWidth()
 {
 	return collisionBox.w;
 }
-
 int Collider::getHeight()
 {
 	return collisionBox.h;
 }
-
 int Collider::getPosX()
 {
 	return collisionBox.x;
 }
-
 int Collider::getPosY()
 {
 	return collisionBox.y;
@@ -52,5 +49,5 @@ SDL_Rect* Collider::getCollisionBox()
 {
 	return &collisionBox;
 }
-
+//static list of every instantiaded collider, used to check for collision in MoveComp
 std::vector<Collider*> Collider::ColliderList;

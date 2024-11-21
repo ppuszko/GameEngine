@@ -15,7 +15,7 @@ public:
 	void addVelX(int value);
 	void addVelY(int value);
 	void move(Collider& collider, const int screenWidth, const int screenHeight, int radius=100);
-	int isNearby(Collider& collider, int radius);
+	int isNearby(Collider& collider);
 	void applyGravity();
 
 
