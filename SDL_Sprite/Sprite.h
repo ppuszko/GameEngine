@@ -4,6 +4,9 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <vector>
+#include <memory>
+
+using SDLTexturePtr = std::unique_ptr<SDL_Texture, decltype(&SDL_DestroyTexture)>;
 
 class Sprite
 {
@@ -28,7 +31,7 @@ public:
 	void setAlpha(Uint8 alpha);
 	std::vector<SDL_Rect> animationClips;
 private:
-	SDL_Texture* sTexture;
+	SDLTexturePtr sTexture;
 	int sWidth;
 	int sHeight;
 

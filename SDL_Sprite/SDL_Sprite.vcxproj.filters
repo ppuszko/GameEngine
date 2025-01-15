@@ -50,5 +50,8 @@
     <ClInclude Include="GameActor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DeltaTime.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

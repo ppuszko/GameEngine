@@ -4,13 +4,8 @@
 #include <vector>
 
 
-Sprite::Sprite()
-{
-	sHeight = 0;
-	sWidth = 0;
-	sTexture = NULL;
+Sprite::Sprite() :sWidth{ 0 }, sHeight{ 0 }, sTexture(nullptr, SDL_DestroyTexture){}
 
-}
 
 Sprite::~Sprite()
 {
@@ -20,10 +15,8 @@ Sprite::~Sprite()
 //crashes every second execution of program, please help me 
 void Sprite::free()
 {
-	if (sTexture != NULL)
+	if (sTexture == nullptr)
 	{
-		SDL_DestroyTexture(sTexture);
-		sTexture = NULL;
 		sWidth = 0;
 		sHeight = 0;
 	}
@@ -35,14 +28,14 @@ bool Sprite::loadFromFile(std::string path, SDL_Renderer* renderer)
 	free();
 	SDL_Surface* loadedSurface = IMG_Load(path.c_str());
 
-	if (loadedSurface == NULL)
+	if (loadedSurface == nullptr)
 	{
 		printf("Surface could not be loaded! Error for path: %s\n IMG Error: %s\n", path.c_str(), IMG_GetError());
 	}
 	else
 	{
-		sTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
-		if (sTexture == NULL)
+		sTexture.reset(SDL_CreateTextureFromSurface(renderer, loadedSurface));
+		if (sTexture == nullptr)
 		{
 			printf("Texture could not be created! Error for path: %s\n IMG Error: %s\n", path.c_str(), SDL_GetError());
 		}
@@ -94,7 +87,7 @@ void Sprite::render(int x, int y, SDL_Renderer* renderer, SDL_Rect* clip, int sc
 		destQuad.y += bufferY;
 	}
 
-	SDL_RenderCopyEx(renderer, sTexture, clip, &destQuad, angle, center, flip);
+	SDL_RenderCopyEx(renderer, sTexture.get(), clip, &destQuad, angle, center, flip);
 }
 
 //renderes animation consisting of multiple frames
@@ -117,12 +110,12 @@ void Sprite::renderAnimation(int x, int y, SDL_Renderer* renderer, std::vector<S
 		startingFrame = 0;
 		currentFrame = 0;
 	}
-	SDL_RenderCopyEx(renderer, sTexture, &clip[currentFrame], &destQuad, angle, center, flip);
+	SDL_RenderCopyEx(renderer, sTexture.get(), &clip[currentFrame], &destQuad, angle, center, flip);
 	startingFrame++;
 }
 
 
-//not really relevant methods
+//not relevant helper methods
 int Sprite::getWidth() const
 {
 	return sWidth;
@@ -142,15 +135,15 @@ void Sprite::updateDimensions(int width, int height)
 }
 void Sprite::setColor(Uint8 red, Uint8 green, Uint8 blue)
 {
-	SDL_SetTextureColorMod(sTexture, red, green, blue);
+	SDL_SetTextureColorMod(sTexture.get(), red, green, blue);
 }
 void Sprite::setBlendMode(SDL_BlendMode blending)
 {
-	SDL_SetTextureBlendMode(sTexture, blending);
+	SDL_SetTextureBlendMode(sTexture.get(), blending);
 }
 void Sprite::setAlpha(Uint8 alpha)
 {
-	SDL_SetTextureAlphaMod(sTexture, alpha);
+	SDL_SetTextureAlphaMod(sTexture.get(), alpha);
 }
 
 
@@ -188,7 +181,7 @@ bool init(SDL_Window*& window, SDL_Renderer*& renderer, int width, int height)
 	return success;
 }
 
-//allows to check if sprite was properly loaded, currently works just like Sprite::loafFromFile, should be modified to load multiple sprites
+//checks if sprite was properly loaded, currently works just like Sprite::loafFromFile, should be modified to load multiple sprites
 bool loadSpriteSheet(Sprite& spriteTexture, SDL_Renderer* renderer, std::string path )
 {
 	

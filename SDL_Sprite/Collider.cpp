@@ -1,5 +1,6 @@
 #include "Collider.h"
 
+
 Collider::Collider()
 {
 	collisionBox = { 0,0,0,0 };
@@ -16,10 +17,35 @@ bool Collider::checkCollision(SDL_Rect* A, SDL_Rect* B)
 	return SDL_HasIntersection(A, B);
 }
 
+// first parameter tells if there was a collision at all, second parameter tells if object should continue falling after colliding.
+std::pair<bool, bool> Collider::checkCollisionProjection(SDL_Rect& A, SDL_Rect& B)
+{
+	std::pair<bool, bool> res({true, false});
+	if ( !((A.x + A.w >= B.x) && (A.x <= B.x + B.w)) )
+	{
+		res.first = false;
+		return res;
+	}
+	if (!((A.y + A.h >= B.y) && (A.y <= B.y + B.h)))
+	{
+		res.first = false;
+		return res;
+	}
+	if (A.y == B.y + B.h) res.second = true;
+	return res;
+}
+
+
 void Collider::showCollisionBox(SDL_Renderer* renderer)
 {
 	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
 	SDL_RenderDrawRect(renderer, &collisionBox);
+}
+
+void Collider::drawShape(SDL_Renderer* renderer)
+{
+	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+	SDL_RenderFillRect(renderer, &collisionBox);
 }
 
 void Collider::setCollisionBoxSize(int width, int height)
