@@ -17,7 +17,7 @@ int main(int agrc, char* args[])
 	
 	//Sprite spriteSheet;
 	//GameObject slime(10);
-	GameActor slime(150, 200, 200,64, 64, 15);
+	GameActor slime(150, 200, 200,64, 64, 10);
 	//GameObject pad1(0, 300);
 	GameObject pad2(0, 300);
 	GameObject pad3(400, 230);
@@ -71,34 +71,6 @@ int main(int agrc, char* args[])
 					{
 						quit = true;
 					}
-					/*else if (e.type == SDL_KEYDOWN)
-					{
-						switch (e.key.keysym.sym)
-						{
-							case SDLK_r:
-								r += 32;
-								break;
-							case SDLK_g:
-								g += 32;
-								break;
-							case SDLK_b:
-								b += 32;
-								break;
-							case SDLK_e:
-								r -= 32;
-								break;
-							case SDLK_f:
-								g -= 32;
-								break;
-							case SDLK_v:
-								b -= 32;
-								break;
-							case SDLK_a:
-								a += 32;
-								break;
-
-						}
-					}*/
 					slime.handleEvent(e);
 				}
 				
@@ -119,23 +91,15 @@ int main(int agrc, char* args[])
 
 				slime.showCollisionBox(renderer);
 				slime.renderAnimation(renderer, frame, 2);
-				//allows for color and alpha modulation
-				/*spriteSheet.setColor(r, g, b);
-				spriteSheet.setAlpha(a);*/
 				
-				//slime.showCollision(renderer);
-				//Render current frame
-				//spriteSheet.renderAnimation(288, 162, renderer, clips, frame, 4);
-				//slime.render(288, 162, renderer, 2, frame);
-				//pad1.render(renderer, 1);
 				pad2.render(renderer, 1);
 				pad3.render(renderer, 1);
-				//pad1.showCollisionBox(renderer);
+				
 				pad2.showCollisionBox(renderer);
 				pad3.showCollisionBox(renderer);
 				SDL_RenderPresent(renderer);
 
-				//std::cout << GameObject::GMList[0]->collisionBox.w;
+				
 				
 				SDL_Delay(16);
 			}

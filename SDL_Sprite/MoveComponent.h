@@ -11,7 +11,7 @@ public:
 	~MoveComponent();
 
 	bool checkNearbyColliders(Collider& collider, int radius);
-	std::pair<int, int> checkNearbyCollidersProjection(Collider& collider, int radius);
+	CollisionInfo checkNearbyCollidersProjection(Collider& collider, int radius);
 	void setIsAirborne(bool value);
 	bool getIsAirborne();
 	void addVelX(int value);

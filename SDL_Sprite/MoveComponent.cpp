@@ -1,4 +1,5 @@
 #include "MoveComponent.h"
+#include <iostream>
 //MoveComponent::MoveComponent()
 //{
 //	posX = 0;
@@ -48,16 +49,20 @@ bool MoveComponent::checkNearbyColliders(Collider& collider, int radius)
 	return false;
 }
 
-std::pair<int, int> MoveComponent::checkNearbyCollidersProjection(Collider& collider, int radius)
+CollisionInfo MoveComponent::checkNearbyCollidersProjection(Collider& collider, int radius)
 {
+	auto c = collider.getCollisionBox();
+	std::cout << "actor  x: " << c->x << " w: " << c->w << " y: " << c->y << " h: " << c->h << std::endl;
 	for (Collider* obj : Collider::ColliderList)
 	{
-		if ((obj != &collider) && isNearby(*obj) <= radius * radius)
+		if ((obj != &collider) /* && isNearby(*obj) <= radius * radius*/)
 		{
-			return collider.checkCollisionProjection(*obj->getCollisionBox(), *collider.getCollisionBox());
+			c = obj->getCollisionBox();
+			std::cout << "x: " << c->x << " w: " << c->w << " y: " << c->y << " h: " << c->h << std::endl;
+			return collider.checkCollisionProjection(*collider.getCollisionBox(), *obj->getCollisionBox());
 		}
 	}
-	return { false, false };
+	return new CollisionInfo;
 }
 
 void MoveComponent::setIsAirborne(bool value)
@@ -83,36 +88,41 @@ void MoveComponent::move(Collider& collider, const int screenWidth, const int sc
 	
 
 	float delta = dt.getDeltaTime();
+	float targetX = posX + velX * delta;
+	collider.getCollisionBox()->x = targetX;
 
-	//float targetX = posX + velX * delta;
-	//float targetX = posY + velY * delta;
-
-	posX += velX*delta;
+	auto collisionResult = checkNearbyCollidersProjection(collider, radius);
+	
+	if ((targetX < 0) || (targetX + collider.getWidth() > screenWidth) || collisionResult.collisionX)
+	{
+		std::cout << "Collision in X detected!" << std::endl;
+		targetX = posX;
+	}	
+	posX = targetX;
 	collider.getCollisionBox()->x = posX;
 
-	if ((targetX < 0) || (targetX + collider.getWidth() > screenWidth) || checkNearbyCollidersProjection(collider, radius).first)
-	{
-		posX -= velX*delta;
-		collider.getCollisionBox()->x = posX;
-	}	
-	
 	//delta = dt.getDeltaTime();
-	posY += velY * delta;
-	collider.getCollisionBox()->y = posY;
+	float targetY = posY + velY * delta;
 
-	if ((posY < 0) || (posY + collider.getHeight() > screenHeight) || checkNearbyCollidersProjection(collider, radius).first)
+	collider.getCollisionBox()->y = targetY;
+	collisionResult = checkNearbyCollidersProjection(collider, radius);
+
+	if ((targetY < 0) || (targetY + collider.getHeight() > screenHeight) || collisionResult.collisionY)
 	{	
-		
-		posY -= velY*delta;
-		collider.getCollisionBox()->y = posY;
-		isAirborne = checkNearbyCollidersProjection(collider, radius).second;
+		std::cout << "collision in Y detected, airborne =  "<< isAirborne << std::endl;
+		targetY = posY;
+		isAirborne = collisionResult.collidedAbove;
 		velY = 0;
 	}
+
+	
+	posY = targetY;
+	collider.getCollisionBox()->y = posY;
+	
 }
 
 void MoveComponent::applyGravity(DeltaTime &dt)
 {
-	
 	velY += gravityFactor;
 }
 

@@ -53,5 +53,8 @@
     <ClInclude Include="DeltaTime.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CollisionInfo.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

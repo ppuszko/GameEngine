@@ -1,5 +1,5 @@
 #include "Collider.h"
-
+#include <iostream>
 
 Collider::Collider()
 {
@@ -18,20 +18,32 @@ bool Collider::checkCollision(SDL_Rect* A, SDL_Rect* B)
 }
 
 // first parameter tells if there was a collision at all, second parameter tells if object should continue falling after colliding.
-std::pair<bool, bool> Collider::checkCollisionProjection(SDL_Rect& A, SDL_Rect& B)
+CollisionInfo Collider::checkCollisionProjection(SDL_Rect& A, SDL_Rect& B)
 {
-	std::pair<bool, bool> res({true, false});
+	CollisionInfo res;
 	if ( !((A.x + A.w >= B.x) && (A.x <= B.x + B.w)) )
 	{
-		res.first = false;
 		return res;
 	}
 	if (!((A.y + A.h >= B.y) && (A.y <= B.y + B.h)))
 	{
-		res.first = false;
 		return res;
 	}
-	if (A.y == B.y + B.h) res.second = true;
+	
+	if (abs(A.x + A.w - B.x) <= marginDifference || abs(A.x - B.x - B.  w) <= marginDifference) res.collisionX = true;
+	
+	if (abs(A.y - B.y - B.h) <= marginDifference)
+	{
+		res.collisionY = true;
+		res.collidedAbove = true;
+	}
+	else if (abs(A.y + A.h - B.y) <= marginDifference)
+	{
+		res.collisionY = true;
+		res.collidedAbove = false;
+	}
+	std::cout << "X: " << res.collisionX << " Y: " << res.collisionY << " airborne: " << res.collidedAbove << std::endl;
+
 	return res;
 }
 
